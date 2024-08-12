@@ -3,6 +3,8 @@
 
 resources/dev/config.py
 src/main/utility/encrypt_decrypt.py
+*__pycache__/
+
 
 #config.py
 #encrypt_decrypt.py
