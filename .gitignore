@@ -4,5 +4,5 @@
 resources/dev/config.py
 src/main/utility/encrypt_decrypt.py
 
-config.py
-encrypt_decrypt.py
+#config.py
+#encrypt_decrypt.py
