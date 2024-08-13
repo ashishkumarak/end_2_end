@@ -1,17 +1,21 @@
 
+
 from resources.dev import config
 from src.main.utility.encrypt_decrypt import *
 from src.main.utility.s3_client_object import *
 from src.main.utility.logging_config import *
 from src.main.utility.my_sql_session import *
 
-
+from dotenv import dotenv_values  ## for loading secrets keys
+####### Get a dictionary of .env variables ############
+conf=dotenv_values()
 
 ####################### Get S3 Client ####################
 
-aws_access_key = config.aws_access_key
+aws_access_key = conf.get('aws_access_key')
 # aws_access_key = "your_encrypted_access_key"
-aws_secret_key = config.aws_secret_key
+aws_secret_key = conf.get('aws_secret_key')
+#aws_secret_key = "your_encrypted_secret_key"
 
 s3_client_provider = S3ClientProvider(decrypt(aws_access_key), decrypt(aws_secret_key))
 s3_client = s3_client_provider.get_client()
