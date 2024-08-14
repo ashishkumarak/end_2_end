@@ -24,7 +24,7 @@ response = s3_client.list_buckets()
 print(response)
 logger.info("List of Buckets: %s", response['Buckets'])
 
-################################ second day -------------------------------------------------
+################################ second day -------------------------------------------------------------------------------
 
 # check if local directory has already a file
 # if file is there then check if the same file is present in the staging area
@@ -61,7 +61,7 @@ if csv_files:
 else:
         logger.info("Last run was successful!!!")
 
-########################## third day --------------------------------------------------------
+########################## third day --------------------------------------------------------------------------------------
 
 try:
     s3_reader = S3Reader()
@@ -80,9 +80,9 @@ except Exception as e:
     logger.error("Exited with error:- %s", e)
     raise e
 
+## INFO - Absolute path on s3 bucket for csv file ['s3://aws-bucket-ak/sales_data/employee_file.csv', 's3://aws-bucket-ak/sales_data/file5.json', 's3://aws-bucket-ak/sales_data/flight_data_2010.csv']
 
-
-bucket_name : config.bucket_name
+bucket_name = config.bucket_name
 local_directory = config.local_directory
 
 prefix = f"s3://{bucket_name}/"
@@ -129,3 +129,6 @@ logger.info("*************** Creating spark session ****************************
 
 spark = spark_session()
 logger.info("****************** spark session created ************************")
+
+################################ fourth day -------------------------------------------------------------------------------
+
