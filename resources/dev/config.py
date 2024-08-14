@@ -1,16 +1,22 @@
 import os
 
-# ## Put in .env file
-# key = ""
-# iv = ""
-# salt = ""
-#
-# #AWS Access And Secret key Put in .env file
-# aws_access_key = "your_encrypted_access_key"
-# aws_secret_key = "your_encrypted_secret_key"
+from dotenv import dotenv_values  ## for loading secrets keys
+####### Get a dictionary of .env variables ############
+conf=dotenv_values()
 
-####################################################################
-## AWS details
+## Put details in .env file
+key = conf.get('key')
+iv = conf.get('iv')
+salt = conf.get('salt')
+
+#####  AWS Access And Secret key
+# Put details in .env file
+
+aws_access_key = conf.get('aws_access_key')
+# aws_access_key = "your_encrypted_access_key"
+aws_secret_key = conf.get('aws_secret_key')
+#aws_secret_key = "your_encrypted_secret_key"
+
 
 bucket_name = "aws-bucket-ak"
 s3_customer_datamart_directory = "customer_data_mart"

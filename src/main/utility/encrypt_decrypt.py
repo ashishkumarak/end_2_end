@@ -5,14 +5,10 @@ import os, sys
 from resources.dev import config
 # from logging_config import logger
 
-from dotenv import dotenv_values  ## for loading secrets keys
-####### Get a dictionary of .env variables ############
-conf=dotenv_values()
-
 try:
-    key = conf.get('key')
-    iv = conf.get('iv')
-    salt = conf.get('salt')
+    key = config.key
+    iv = config.iv
+    salt = config.salt
 
     if not (key and iv and salt):
         raise Exception(F"Error while fetching details for key/iv/salt")

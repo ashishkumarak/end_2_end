@@ -15,7 +15,7 @@ def get_mysql_connection():
 #     host="localhost",
 #     user="root",
 #     password="password",
-#     database="manish"
+#     database="ashish"
 # )
 #
 # # Check if the connection is successful
@@ -25,7 +25,7 @@ def get_mysql_connection():
 # cursor = connection.cursor()
 #
 # # Execute a SQL query
-# query = "SELECT * FROM manish.testing"
+# query = "SELECT * FROM ashish.testing"
 # cursor.execute(query)
 #
 # # Fetch and print the results
