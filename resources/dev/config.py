@@ -1,6 +1,7 @@
 import os
 
 from dotenv import dotenv_values  ## for loading secrets keys
+
 ####### Get a dictionary of .env variables ############
 conf=dotenv_values()
 
@@ -28,11 +29,14 @@ s3_processed_directory = "sales_data_processed/"
 
 #Database credential
 # MySQL database connection properties
-database_name = "youtube_project"
+
+mySql_password= conf.get('mySql_password')
+database_name = "ashish"
+
 url = f"jdbc:mysql://localhost:3306/{database_name}"
 properties = {
     "user": "root",
-    "password": "password",
+    "password": mySql_password,
     "driver": "com.mysql.cj.jdbc.Driver"
 }
 

@@ -1,10 +1,13 @@
 import mysql.connector
 
+from resources.dev import config
+
+
 def get_mysql_connection():
     connection = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="password",
+        password=config.mySql_password,
         database="ashish"
     )
     return connection
