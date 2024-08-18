@@ -7,7 +7,7 @@ CREATE TABLE product_staging_table (
     status VARCHAR(1)
 );
 
-
+-- customer table
 CREATE TABLE customer (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50),

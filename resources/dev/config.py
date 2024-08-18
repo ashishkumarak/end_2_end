@@ -40,7 +40,7 @@ properties = {
     "driver": "com.mysql.cj.jdbc.Driver"
 }
 
-# Table name
+# Table name ( dimension tables )
 customer_table_name = "customer"
 product_staging_table = "product_staging_table"
 product_table = "product"
