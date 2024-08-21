@@ -6,10 +6,13 @@ from pyspark.sql.types import StructField, StructType, IntegerType, StringType, 
 
 
 from resources.dev import config
+from src.main.delete.local_file_delete import delete_local_file
 from src.main.download.aws_file_download import S3FileDownloader
 from src.main.move.move_files import move_s3_to_s3
 from src.main.read.database_read import DatabaseReader
+from src.main.transformations.jobs.customer_mart_sql_transform_write import customer_mart_calculation_table_write
 from src.main.transformations.jobs.dimension_tables_join import dimensions_table_join
+from src.main.transformations.jobs.sales_mart_sql_transform_write import sales_mart_calculation_table_write
 from src.main.upload.upload_to_s3 import UploadToS3
 from src.main.utility.encrypt_decrypt import *
 from src.main.utility.s3_client_object import *
@@ -90,7 +93,9 @@ except Exception as e:
     logger.error("Exited with error:- %s", e)
     raise e
 
-## INFO - Absolute path on s3 bucket for csv file ['s3://aws-bucket-ak/sales_data/employee_file.csv', 's3://aws-bucket-ak/sales_data/file5.json', 's3://aws-bucket-ak/sales_data/flight_data_2010.csv']
+## INFO - Absolute path on s3 bucket for csv file ['s3://aws-bucket-ak/sales_data/employee_file.csv',
+#                           's3://aws-bucket-ak/sales_data/file5.json',
+#                           's3://aws-bucket-ak/sales_data/flight_data_2010.csv']
 
 bucket_name = config.bucket_name
 local_directory = config.local_directory
@@ -394,124 +399,73 @@ for root, dirs, files in os.walk(config.sales_team_data_mart_partitioned_local_f
         s3_key = f"{s3_prefix}/{current_epoch}/{relative_file_path}"
         s3_client.upload_file(local_file_path, config.bucket_name, s3_key)
 
-
 ################################ sixth day -------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#calculation for customer mart
+#find out the customer total purchase every month
+#write the data into MySQL table
+logger.info("******** Calculating customer every month purchased amount *******")
+customer_mart_calculation_table_write(final_customer_data_mart_df)
+logger.info("****** Calculation of customer mart done and written into the table  **********")
+
+#calculation for sales team mart
+#find out the total sales done by each sales person every month
+#Give the top performer 1% incentive of total sales of the month
+#Rest sales person will get nothing
+#write the data into MySQL table
+logger.info("******Calculating sales every month billed amount *******")
+sales_mart_calculation_table_write(final_sales_team_data_mart_df)
+logger.info("******Calculation of sales mart done and written into the table*********")
+
+############################ Last Step ##################
+# Move the file on s3 into processed folder and delete the local files
+source_prefix = config.s3_source_directory
+destination_prefix = config.s3_processed_directory
+message = move_s3_to_s3(s3_client,config.bucket_name,source_prefix,destination_prefix)
+logger.info(f"{message}")
+
+### Deleting the local files
+logger.info("******** Deleting sales data from local ************")
+delete_local_file(config.local_directory)
+logger.info("******** Deleted sales data from local ***********")
+
+logger.info("******** Deleting customer_data_mart from local ***********")
+delete_local_file(config.customer_data_mart_local_file)
+logger.info("******** Deleted customer_data_mart from local ***********")
+
+logger.info("******** Deleting sales_team_data_mart from local ***********")
+delete_local_file(config.sales_team_data_mart_local_file)
+logger.info("******** Deleted sales_team_data_mart from local ***********")
+
+logger.info("******** Deleting sales partition data from local ***********")
+delete_local_file(config.sales_team_data_mart_partitioned_local_file)
+logger.info("******** Deleted sales partition data from local ***********")
+
+# Update the status of staging table
+update_statements = []
+if correct_files:
+    for file in correct_files:
+        filename = os.path.basename(file)
+        statements= f"UPDATE {db_name}.{config.product_staging_table} " \
+                    f" SET status = 'I',updated_date='{formatted_date}' " \
+                    f"WHERE file_name = '{filename}'"
+        update_statements.append(statements)
+
+    logger.info(f"Updated statement created for staging table --- {update_statements}")
+    logger.info("***************** Connecting with My SQL server **********************")
+    connection = get_mysql_connection()
+    cursor= connection.cursor()
+    logger.info("***************** My SQL server connected successfully ******************")
+    for statement in update_statements:
+        cursor.execute(statement)
+        connection.commit()
+    cursor.close()
+    connection.close()
+
+else:
+    logger.error("********** There is some error in process in between ************")
+    sys.exit()
+
+input("Press enter to terminate ")
 
 
